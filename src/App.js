@@ -13,7 +13,7 @@ import './index.css'
 const host = "http://95.85.30.94/es/papers/"
 const searchkit = new SearchkitManager(host)
 
-const MovieHitsGridItem = (props)=> {
+const PaperHitsGridItem = (props)=> {
   const {bemBlocks, result} = props
   let url = "http://www.imdb.com/title/" + result._source.imdbId //TODO workout mechanism to point to https://papers.nips.cc/
   const source = extend({}, result._source, result.highlight)
@@ -27,7 +27,7 @@ const MovieHitsGridItem = (props)=> {
   )
 }
 
-const MovieHitsListItem = (props)=> {
+const PaperHitsListItem = (props)=> {
   const {bemBlocks, result} = props
   let url = "http://www.imdb.com/title/" + result._source.imdbId
   const source = extend({}, result._source, result.highlight)
@@ -100,8 +100,8 @@ class App extends Component {
                 hitsPerPage={12} highlightFields={["title","plot"]}
                 sourceFilter={["plot", "title", "poster", "imdbId", "imdbRating", "year"]}
                 hitComponents={[
-                  {key:"grid", title:"Grid", itemComponent:MovieHitsGridItem, defaultOption:true},
-                  {key:"list", title:"List", itemComponent:MovieHitsListItem}
+                  {key:"grid", title:"Grid", itemComponent:PaperHitsGridItem, defaultOption:true},
+                  {key:"list", title:"List", itemComponent:PaperHitsListItem}
                 ]}
                 scrollTo="body"
             />
