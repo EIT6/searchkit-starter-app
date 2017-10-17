@@ -15,7 +15,7 @@ const searchkit = new SearchkitManager(host)
 
 const MovieHitsGridItem = (props)=> {
   const {bemBlocks, result} = props
-  let url = "http://www.imdb.com/title/" + result._source.imdbId
+  let url = "http://www.imdb.com/title/" + result._source.imdbId //TODO workout mechanism to point to https://papers.nips.cc/
   const source = extend({}, result._source, result.highlight)
   return (
     <div className={bemBlocks.item().mix(bemBlocks.container("item"))} data-qa="hit">
@@ -38,30 +38,33 @@ const MovieHitsListItem = (props)=> {
       </div>
       <div className={bemBlocks.item("details")}>
         <a href={url} target="_blank"><h2 className={bemBlocks.item("title")} dangerouslySetInnerHTML={{__html:source.title}}></h2></a>
-        <h3 className={bemBlocks.item("subtitle")}>Released in {source.year}, rated {source.imdbRating}/10</h3>
+        <h3 className={bemBlocks.item("subtitle")}>Released in {source.year}, cited {source.citations} times</h3>
         <div className={bemBlocks.item("text")} dangerouslySetInnerHTML={{__html:source.plot}}></div>
       </div>
     </div>
   )
 }
-
+//TODO field weights
 class App extends Component {
   render() {
     return (
       <SearchkitProvider searchkit={searchkit}>
         <Layout>
           <TopBar>
-            <div className="my-logo">Searchkit Acme co</div>
-            <SearchBox autofocus={true} searchOnChange={true} prefixQueryFields={["actors^1","type^2","languages","title^10"]}/>
+            <div className="my-logo">NIPS Papers IR System</div>
+            <SearchBox autofocus={true} searchOnChange={true} prefixQueryFields={["abstract^1","title^2"]}/>
           </TopBar>
-
         <LayoutBody>
 
           <SideBar>
+            <RangeFilter min={0} max={1000} field="citations" id="citations" title="Citation Counts" showHistogram={true}/>
+            <RangeFilter min={1987} max={2017} field="year" id="year" title="Publication Year" showHistogram={true}/>
+            <RefinementListFilter id="authors" title="Authors" field="authors.raw" size={10}/>
+
             <HierarchicalMenuFilter fields={["type.raw", "genres.raw"]} title="Categories" id="categories"/>
             <DynamicRangeFilter field="metaScore" id="metascore" title="Metascore" rangeFormatter={(count)=> count + "*"}/>
             <RangeFilter min={0} max={10} field="imdbRating" id="imdbRating" title="IMDB Rating" showHistogram={true}/>
-            <InputFilter id="writers" searchThrottleTime={500} title="Writers" placeholder="Search writers" searchOnChange={true} queryFields={["writers"]} />
+            <InputFilter id="authors-search" searchThrottleTime={500} title="Authors" placeholder="Search authors" searchOnChange={true} queryFields={["authors"]} />
             <RefinementListFilter id="actors" title="Actors" field="actors.raw" size={10}/>
             <RefinementListFilter id="writersFacets" translations={{"facets.view_more":"View more writers"}} title="Writers" field="writers.raw" operator="OR" size={10}/>
             <RefinementListFilter id="countries" title="Countries" field="countries.raw" operator="OR" size={10}/>
